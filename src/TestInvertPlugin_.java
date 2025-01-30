@@ -7,8 +7,9 @@ public class TestInvertPlugin_ implements PlugIn {
 		ImagePlus imagem = IJ.getImage();
 		for (int i = 0; i < 10; i++) {
 			IJ.run(imagem,"Invert", "");
-			IJ.wait(2500);
+			IJ.wait(1000);
 			IJ.run(imagem, "Invert", "");
+			IJ.wait(1000);
 		}
 	}
 }
