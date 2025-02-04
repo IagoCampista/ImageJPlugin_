@@ -15,15 +15,10 @@ public class DividirImagemColorida_ implements PlugIn {
 		ImagePlus imagem_verde = imagem_original.duplicate();
 		ImagePlus imagem_azul = imagem_original.duplicate();
 		extractChannel(imagem_vermelha, 0);
-		IJ.log("chegou vermelho");
 		imagem_vermelha.show();
-		IJ.wait(1000);
 		extractChannel(imagem_verde, 1);
-		IJ.log("chegou verde");
 		imagem_verde.show();
-		IJ.wait(1000);
 		extractChannel(imagem_azul, 2);
-		IJ.log("chegou azul");
 		imagem_azul.show();
 		
 	}
@@ -33,40 +28,35 @@ public class DividirImagemColorida_ implements PlugIn {
         int width = image.getWidth();
         int height = image.getHeight();
         
-        // Loop through each pixel
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                // Get the RGB values of the pixel
                 int[] rgb = new int[3];
                 processor.getPixel(x, y, rgb);
 
-                // Extract the selected channel and set the other channels to 0
+                //Copia os valores de canal {color} para os demais canais
                 switch (color) {
                     case 0:
-                        rgb[1] = rgb[0]; // Green channel
-                        rgb[2] = rgb[0]; // Blue channel
+                        rgb[1] = rgb[0];
+                        rgb[2] = rgb[0];
                         break;
                     case 1:
-                        rgb[0] = rgb[1]; // Red channel
-                        rgb[2] = rgb[1]; // Blue channel
+                        rgb[0] = rgb[1];
+                        rgb[2] = rgb[1];
                         break;
                     case 2:
-                        rgb[0] = rgb[2]; // Red channel
-                        rgb[1] = rgb[2]; // Green channel
+                        rgb[0] = rgb[2];
+                        rgb[1] = rgb[2];
                         break;
                     default:
                     	IJ.log(String.valueOf(color));
-                        IJ.error("Invalid channel selected.");
+                        IJ.error("Canal invalido.");
                         return;
                 }
-
-                // Update the pixel with the modified RGB values
+                // Atualiza a imagem com o novo valor rgb em cinza
                 processor.putPixel(x, y, rgb);
                 
             }
         }
-        // Update the image display
-        //image.updateAndDraw();
     }
 }
 
