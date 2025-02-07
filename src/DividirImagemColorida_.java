@@ -7,7 +7,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
-
+//adicionar atributo de objeto
 public class DividirImagemColorida_ implements PlugIn {
 	public void run(String arg) {
 		ImagePlus imagem_original = IJ.getImage();
