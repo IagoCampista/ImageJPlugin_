@@ -16,7 +16,7 @@ import ij.gui.DialogListener;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import java.awt.*;
-import java.awt.event.*;
+
 
 public class ModifyImage_ implements PlugIn, DialogListener {
     private ImagePlus imagem_original;
@@ -40,10 +40,9 @@ public class ModifyImage_ implements PlugIn, DialogListener {
         // Cria a interface gráfica
         caixa_dialogo = new GenericDialog("Alterar características da Imagem");
         caixa_dialogo.addSlider("Brilho:", -255, 255, 0, 5);
-        caixa_dialogo.addSlider("Contraste:", 50, 200, 100, 5);
+        caixa_dialogo.addSlider("Contraste:", -128, 128, 0, 1);
         caixa_dialogo.addSlider("Solarização:", 0, 255, 128, 1);
         caixa_dialogo.addSlider("Saturação:", 0, 100, 0, 1);
-        caixa_dialogo.addCheckbox("Visualizar em tempo real", true);
         caixa_dialogo.addDialogListener(this);
         caixa_dialogo.showDialog();
 
@@ -64,20 +63,44 @@ public class ModifyImage_ implements PlugIn, DialogListener {
         double sliderContraste = gd.getNextNumber();
         double sliderSolarizacao = gd.getNextNumber();
         double sliderSaturacao = gd.getNextNumber();
-        boolean realTimePreview = gd.getNextBoolean();
 
-        if (realTimePreview) {
-            workingProcessor.copyBits(originalProcessor, 0, 0, ij.process.Blitter.COPY);
-            applyAdjustments(workingProcessor, sliderBrilho, sliderContraste, sliderSolarizacao, sliderSaturacao);
-            imagem_original.setProcessor(workingProcessor);
-            imagem_original.updateAndDraw();
-        }
+        workingProcessor.copyBits(originalProcessor, 0, 0, ij.process.Blitter.COPY);
+        applyAdjustments(workingProcessor, sliderBrilho, sliderContraste, sliderSolarizacao, sliderSaturacao);
+        imagem_original.setProcessor(workingProcessor);
+        imagem_original.updateAndDraw();
         return true;
     }
 
     private void applyAdjustments(ImageProcessor ip, double brightness, double contrast, double solarizeThreshold, double desaturation) {
-        ip.multiply(contrast / 100.0);
-        ip.add(brightness);
+        
+        int brilho = (int) brightness;
+        for (int y = 0; y < ip.getHeight(); y++) {
+            for (int x = 0; x < ip.getWidth(); x++) {
+                int[] rgb = new int[3];
+                ip.getPixel(x, y, rgb);
+                rgb[0] = Math.min(255, Math.max(0, rgb[0] + brilho));
+                rgb[1] = Math.min(255, Math.max(0, rgb[1] + brilho));
+                rgb[2] = Math.min(255, Math.max(0, rgb[2] + brilho));
+                ip.putPixel(x, y, rgb);
+            }
+        }
+        
+        double factor = (259.0 * (contrast + 255.0)) / (255.0 * (259.0 - contrast));
+        // Itera sobre cada pixel da imagem
+        for (int y = 0; y < ip.getHeight(); y++) {
+            for (int x = 0; x < ip.getWidth(); x++) {
+                int[] rgb = new int[3];
+                ip.getPixel(x, y, rgb);
+
+                // Aplica o fator de contraste para cada canal (R, G, B)
+                rgb[0] = (int) Math.min(255, Math.max(0, ((factor * (rgb[0] - 128)) + 128)));
+                rgb[1] = (int) Math.min(255, Math.max(0, ((factor * (rgb[1] - 128)) + 128)));
+                rgb[2] = (int) Math.min(255, Math.max(0, ((factor * (rgb[2] - 128)) + 128)));
+
+                ip.putPixel(x, y, rgb);
+            }
+        }
+        
 
         // Aplica solarização
 //        for (int y = 0; y < ip.getHeight(); y++) {
