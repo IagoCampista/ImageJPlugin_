@@ -40,7 +40,7 @@ public class AlterarImagem_ implements PlugIn, DialogListener {
         // Cria a interface gráfica
         caixa_dialogo = new GenericDialog("Alterar características da Imagem");
         caixa_dialogo.addSlider("Brilho:", -255, 255, 0, 5);
-        caixa_dialogo.addSlider("Contraste:", -128, 128, 0, 1);
+        caixa_dialogo.addSlider("Contraste:", -255, 255, 0, 1);
         caixa_dialogo.addSlider("Solarização:", 0, 255, 255, 1);
         caixa_dialogo.addSlider("Saturação:", 0, 1, 1, 0.01);
         caixa_dialogo.addDialogListener(this);
@@ -64,9 +64,10 @@ public class AlterarImagem_ implements PlugIn, DialogListener {
         double sliderSolarizacao = gd.getNextNumber();
         double sliderSaturacao = gd.getNextNumber();
 
-        workingProcessor.copyBits(originalProcessor, 0, 0, ij.process.Blitter.COPY);
-        applyAdjustments(workingProcessor, sliderBrilho, sliderContraste, sliderSolarizacao, sliderSaturacao);
+        //workingProcessor.copyBits(originalProcessor, 0, 0, ij.process.Blitter.COPY);
+        workingProcessor = originalProcessor.duplicate();
         imagem_original.setProcessor(workingProcessor);
+        applyAdjustments(workingProcessor, sliderBrilho, sliderContraste, sliderSolarizacao, sliderSaturacao);
         imagem_original.updateAndDraw();
         return true;
     }
@@ -84,9 +85,10 @@ public class AlterarImagem_ implements PlugIn, DialogListener {
                 ip.putPixel(x, y, rgb);
             }
         }
-        /* 	-O primeiro passo para alterar o contraste de uma imagem é calcular o Fator de Contraste 
+        /* 	Aplica o contraste
+         * - O primeiro passo para alterar o contraste de uma imagem é calcular o Fator de Contraste 
          * para um determinado nível de contraste C: F = (259*(C+255))/(255*(259-C))
-			- O segundo passo é aplicar o fator de contraste para cada um dos canais que formam cada pixel da imagem*/
+		   - O segundo passo é aplicar o fator de contraste para cada um dos canais que formam cada pixel da imagem*/
         double fator = (259.0 * (contraste + 255.0)) / (255.0 * (259.0 - contraste));
         for (int y = 0; y < ip.getHeight(); y++) {
         	for (int x = 0; x < ip.getWidth(); x++) {
