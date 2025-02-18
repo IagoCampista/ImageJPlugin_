@@ -17,13 +17,13 @@ public class Diferenca_ implements PlugIn {
         }
         // Obtém a imagem original
 
-       diferenca(WindowManager.getImage(lista_Imagens[0]), WindowManager.getImage(lista_Imagens[1]), WindowManager.getImage(lista_Imagens[2]));
+       diferenca(WindowManager.getImage(lista_Imagens[0]), WindowManager.getImage(lista_Imagens[1]));
     }
 
     
     
     
-    private void diferenca(ImagePlus imagem_original, ImagePlus image1, ImagePlus image2) {
+    private void diferenca(ImagePlus image1, ImagePlus image2) {
     	
         ImageProcessor processor1 = image1.getProcessor();
         int width1 = image1.getWidth();
