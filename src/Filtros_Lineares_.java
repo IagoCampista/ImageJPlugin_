@@ -122,8 +122,8 @@ public class Filtros_Lineares_ implements PlugIn, DialogListener  {
                         sum += pixel_value * kernel[ky + 1][kx + 1];
                     }
                 }
-                int novoValor = (int) Math.max(0, Math.min(255, sum)); 
-                workingProcessor.putPixel(x, y, novoValor);
+                int newPixel = (int) Math.max(0, Math.min(255, sum)); 
+                workingProcessor.putPixel(x, y, newPixel);
             }
         }
         

@@ -140,7 +140,7 @@ public class Filtros_Nao_Lineares_ implements PlugIn, DialogListener  {
                 }
 
                 Arrays.sort(vetorPixels);
-                mediana = vetorPixels[4];
+                mediana = vetorPixels[vetorPixels.length / 2];
                 newPixel = Math.max(0, Math.min(255, mediana)); 
                 workingProcessor.putPixel(x, y, newPixel);
             }
