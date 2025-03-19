@@ -58,7 +58,7 @@ public class Imagens_ROI_Unica_ implements PlugIn  {
 		// Verifica se há uma imagem aberta, se nao abre uma imagem binaria para teste 
         int[] lista_Imagens = WindowManager.getIDList();
         if (lista_Imagens == null || lista_Imagens.length == 0) {
-            imagem_original = new ImagePlus("/Users/iagocampista/Library/CloudStorage/GoogleDrive-iagocampista@gmail.com/Other computers/Meu computador/Dados PC-GoogleDrive/Estudos 2024.2/Processamento de Imagens/imagensArvores/arvores32.jpg");
+            imagem_original = new ImagePlus("/Users/iagocampista/Documents/Projects/ImagensArvores/ArvoresSample/arvores53.jpg");
             imagem_auxiliar = imagem_original.duplicate();
             imagem_original.show(); 
         }
@@ -66,8 +66,8 @@ public class Imagens_ROI_Unica_ implements PlugIn  {
         	imagem_original = WindowManager.getCurrentImage();
         	imagem_auxiliar = imagem_original.duplicate();
         }
-        diretorio_origem = "/Users/iagocampista/Library/CloudStorage/GoogleDrive-iagocampista@gmail.com/Other computers/Meu computador/Dados PC-GoogleDrive/Estudos 2024.2/Processamento de Imagens/imagensArvores/ArvoresTeste/";
-        diretorio_destino ="/Users/iagocampista/Library/CloudStorage/GoogleDrive-iagocampista@gmail.com/Other computers/Meu computador/Dados PC-GoogleDrive/Estudos 2024.2/Processamento de Imagens/imagensArvores/Arvores Individuais/";
+        diretorio_origem = "/Users/iagocampista/Documents/Projects/ImagensArvores/ArvoresSample";
+        diretorio_destino ="/Users/iagocampista/Documents/Projects/ImagensArvores/ArvoresIndividuais";
   
 
 
@@ -76,20 +76,23 @@ public class Imagens_ROI_Unica_ implements PlugIn  {
        imagem_auxiliar.setProcessor(workingProcessor);
        
        //Realizar o Threshold na imagem
-       IJ.run(imagem_auxiliar, "Threshold...", "lower=50 upper=150");
+       //IJ.run(imagem_auxiliar, "Threshold...", "lower=50 upper=150");
        
        // Converte para máscara binária
-       IJ.run(imagem_auxiliar, "Convert to Mask", "");
+       IJ.run(imagem_auxiliar, "Make Binary", "");
        
+       //IJ.run(imagem_auxiliar, "Fill Holes", "");
        
-       //imagem_auxiliar.show();
+      
        
        //imp imagem original
        
-       // Executa o comando Analyze Particles
+       
        RoiManager roiManager = new RoiManager();
        ResultsTable rt = new ResultsTable();
-       IJ.run(imagem_auxiliar, "Analyze Particles...", "size=800-Infinity show=Nothing add");
+       
+       // Executa o comando Analyze Particles
+       IJ.run(imagem_auxiliar, "Analyze Particles...", "size=10000-Infinity show=Nothing add");
 
        // Adiciona as ROIs ao RoiManager
        roiManager = RoiManager.getInstance();
@@ -97,7 +100,7 @@ public class Imagens_ROI_Unica_ implements PlugIn  {
            roiManager = new RoiManager();
        }
 
-    // Coloca a imagem RGB abaixo do overlay de análise
+       // Coloca a imagem RGB abaixo do overlay de análise
        ImagePlus originalImp = imagem_original.duplicate();
        Overlay overlay = imagem_original.getOverlay();
        if (overlay != null) {
@@ -118,9 +121,6 @@ public class Imagens_ROI_Unica_ implements PlugIn  {
     	   IJ.log("Quantidade de ROIs superior a 40, imagens nao salvas pois pode se tratar de um erro de analise. Qtd de Rois: "+String.valueOf(roiManager.getCount()));
        }
 
-    
-
-       
    
        
   
