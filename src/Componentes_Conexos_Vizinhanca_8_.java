@@ -31,7 +31,7 @@ import java.util.Queue;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 
-public class Componentes_Conexos_ implements PlugIn  {
+public class Componentes_Conexos_Vizinhanca_8_ implements PlugIn  {
    
    private ImagePlus imagem_original, imagem_rotulada;
    private ByteProcessor originalProcessor, labeledProcessor, workingProcessor;
@@ -57,54 +57,40 @@ public class Componentes_Conexos_ implements PlugIn  {
            IJ.showMessage("Error", "A imagem precisa ser em escala de cinza.");
            return;
        }
-       //Cria uma imagem nova em branco (ou preto neste caso) do mesmo tamnho da imagem original
        imagem_rotulada = imagem_original.duplicate();
        imagem_rotulada.setTitle("Rotulos");
+       
        originalProcessor = (ByteProcessor) imagem_original.getProcessor();
        width = originalProcessor.getWidth();
        height = originalProcessor.getHeight();
        labeledProcessor = new ByteProcessor(width, height);
        imagem_rotulada.setProcessor(labeledProcessor);
        
-       label = 50;       
+       label = 50; // Inicia o rótulo com um valor de cinza médio
        
        for (int y = 0; y < height; y++) {
            for (int x = 0; x < width; x++) {
-        	   //Confere se um pixel na imagem original não é preto ao mesmo tempo que confere se este mesmo pixel na imagem a ser rotulada é preto
-        	   // ou seja, se ele faz parte de um componente conexo e ainda não foi rotulado
                if(originalProcessor.getPixel(x, y) != 0 && labeledProcessor.getPixel(x, y) == 0) {
-                   
                    listaPixels.add(new int[] {x,y});
                    
                    while(!listaPixels.isEmpty()) {
-                       int[] pixel = listaPixels.remove();
-                       int px = pixel[0];
-                       int py = pixel[1];
-                       adjacentes = new int[][]  {
-                           //Vizinhança 4 do pixel atual
-                           {px-1, py},
-                           {px+1, py},
-                           {px, py-1},
-                           {px, py+1}
-                       };
-                       for(int i = 0; i<adjacentes.length; i++) {
-                           int x_a, y_a;
-                           x_a = adjacentes[i][0];
-                           y_a = adjacentes[i][1];
-                           
-                           //confere se o pixel esta dentro da imagem
-                           if(!(x_a < 0 || x_a >= width || y_a < 0 || y_a >= height)) {
-                        	   //confere se o pixel adjacente tem o mesmo valor que o pixel em questao , ou seja se fazem parte do mesmo componente conexo e se ainda nao foi rotulado 
-                               if(originalProcessor.getPixel(px, py) == originalProcessor.getPixel(x_a, y_a) && labeledProcessor.getPixel(x_a, y_a) == 0 ) {
-                                   labeledProcessor.putPixel(x_a, y_a, label);
-                                   //adiciona o pixel adjacente na lista para ser analizado na sequencia
-                                   listaPixels.add(new int[] {x_a, y_a});
+                       listaPixels.remove();
+                       for(int px = x-1; px<+1; px++) {
+                    	   for (int py = y-1; py<=y+1; py++) {
+                               if(!(px < 0 || px >= width || py < 0 || py >= height)) {
+                                   if(labeledProcessor.getPixel(px, py) == 0 && originalProcessor.getPixel(px, py) == originalProcessor.getPixel(px, py)) {
+                                       labeledProcessor.putPixel(px, py, label);
+                                       listaPixels.add(new int[] {px, py});
+                                   }
                                }
-                           }
+                    		   
+                    	   }
+                    	   
                        }
                    }
-                   label += 50; // Incrementa o valor do rótulo para o próximo componente para que cada componente tenha um tom de cinza
+                   label += 50; // Incrementa o valor do rótulo para o próximo componente
                    if (label > 255) label = 50; // Reinicia o valor do rótulo se ultrapassar 255
+                   
                }
            }
        }
@@ -114,3 +100,70 @@ public class Componentes_Conexos_ implements PlugIn  {
        
    }
 }
+
+
+/*
+                    while(!listaPixels.isEmpty()) {
+                       int[] pixel = listaPixels.remove();
+                       for(int x_a = x-1; x_a <=x+1; x_a++){
+                       
+                       }
+                       int px = pixel[0];
+                       int py = pixel[1];
+                       adjacentes = new int[][]  {
+                           //Vizinhança 8 do pixel atual
+                           {px-1, py},
+                           {px+1, py},
+                           {px, py-1},
+                           {px, py+1},
+                           {px-1, py-1},
+                           {px+1, py-1},
+                           {px-1, py+1},
+                           {px+1, py+1}
+                       };
+                       for(int i = 0; i<8; i++) {
+                           int x_a, y_a;
+                           x_a = adjacentes[i][0];
+                           y_a = adjacentes[i][1];
+                           //confere se o pixel esta dentro da imagem
+                           if(!(x_a < 0 || x_a >= width || y_a < 0 || y_a >= height)) {
+                               if(labeledProcessor.getPixel(x_a, y_a) == 0 && originalProcessor.getPixel(px, py) == originalProcessor.getPixel(x_a, y_a)) {
+                                   labeledProcessor.putPixel(x_a, y_a, label);
+                                   listaPixels.add(new int[] {x_a, y_a});
+                               }
+                           }
+                       }
+                   }
+                   label += 20; // Incrementa o valor do rótulo para o próximo componente
+                   if (label > 255) label = 50; // Reinicia o valor do rótulo se ultrapassar 255
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                                      while(!listaPixels.isEmpty()) {
+                       int[] pixel = listaPixels.remove();
+                       //passa pelos vizinhos 8 do pixel em questao
+                       for(int x_a = x-1; x_a <=x+1; x_a++) {
+                    	   for(int y_a = y-1; y_a <=y+1; y_a++) {
+                    		   
+                    		   if(!(x_a == x && y_a == y)) {
+                    			   if(!(x_a < 0 || x_a >= width || y_a < 0 || y_a >= height)) {
+                                       if(labeledProcessor.getPixel(x_a, y_a) == 0 && originalProcessor.getPixel(x, y) == originalProcessor.getPixel(x_a, y_a)) {
+                                           labeledProcessor.putPixel(x_a, y_a, label);
+                                           listaPixels.add(new int[] {x_a, y_a});
+                                       }
+                                   }
+                    		   }                    		   
+                    		   
+                    		   
+                           }
+                       }
+                   }
+                   label += 20; // Incrementa o valor do rótulo para o próximo componente
+                   if (label > 255) label = 50; // Reinicia o valor do rótulo se ultrapassar 255
+ */
+
+
