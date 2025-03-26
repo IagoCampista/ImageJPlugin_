@@ -35,7 +35,7 @@ public class Plugin_Teste_ implements PlugIn  {
    
    private ImagePlus imagem_original, imagem_rotulada;
    private ByteProcessor originalProcessor, labeledProcessor, workingProcessor;
-   private int width, height, label;
+   private int width, height, label, tamanhofila;
    private int [][] adjacentes;
    private Queue<int[]> listaPixels = new LinkedList<>();
    
@@ -66,7 +66,8 @@ public class Plugin_Teste_ implements PlugIn  {
        labeledProcessor = new ByteProcessor(width, height);
        imagem_rotulada.setProcessor(labeledProcessor);
        
-       label = 50;       
+       label = 50; 
+       tamanhofila = 1;
        
        for (int y = 0; y < height; y++) {
            for (int x = 0; x < width; x++) {
@@ -95,6 +96,7 @@ public class Plugin_Teste_ implements PlugIn  {
                                if(labeledProcessor.getPixel(x_a, y_a) == 0 && originalProcessor.getPixel(px, py) == originalProcessor.getPixel(x_a, y_a)) {
                                    labeledProcessor.putPixel(x_a, y_a, label);
                                    listaPixels.add(new int[] {x_a, y_a});
+                                   if(listaPixels.size() > tamanhofila)  tamanhofila = listaPixels.size();
                                }
                            }
                        }
@@ -106,7 +108,7 @@ public class Plugin_Teste_ implements PlugIn  {
        }
            
        imagem_rotulada.show();
-       
+       IJ.log(String.valueOf(tamanhofila));
        
    }
 }
